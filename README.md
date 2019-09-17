@@ -68,6 +68,10 @@ The VESPA manager container requires the following environment variables:
 
 * VESMGR_APPMGRDOMAIN - Application manager domain. This is for testing purposes, only. Default: service-ricplt-appmgr-http.ricplt.svc.cluster.local.
 
+# Liveness probe
+
+The VESPA manager replies to liveness HTTP GET at path /supervision.
+
 # Unit Tests
 
 In order to run the VESPA manager unit tests, give the following command:

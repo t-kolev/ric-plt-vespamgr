@@ -51,4 +51,10 @@ spec:
           env:
             - name: VESMGR_APPMGRDOMAIN
               value: appmgr-service
-
+          livenessProbe:
+            httpGet:
+              path: /supervision
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 20
