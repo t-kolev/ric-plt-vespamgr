@@ -34,6 +34,13 @@ func testBaseConf(t *testing.T, vesconf VESAgentConfiguration) {
 	assert.Equal(t, vesconf.Event.MaxMissed, 2)
 	assert.Equal(t, vesconf.Event.RetryInterval, time.Second*5)
 	assert.Equal(t, vesconf.Measurement.Prometheus.KeepAlive, time.Second*30)
+	assert.Equal(t, vesconf.Event.VNFName, defaultVNFName)
+	assert.Equal(t, vesconf.Event.ReportingEntityName, "Vespa")
+	// depending on the credentials with which this test is run,
+	// root or non-root, the code either reads the UUID from the file or
+	// ends up using the default id. Just check the length here,
+	// not the actual value.
+	assert.Len(t, vesconf.Event.ReportingEntityID, len(defaultReportingEntityID))
 }
 
 func TestBasicConfigContainsCorrectValues(t *testing.T) {
@@ -41,7 +48,15 @@ func TestBasicConfigContainsCorrectValues(t *testing.T) {
 	testBaseConf(t, vesconf)
 }
 
+func TestBasicConfigContainsCorrectVNFName(t *testing.T) {
+	os.Setenv("VESMGR_VNFNAME", "VNF-111")
+	vesconf := basicVespaConf()
+	assert.Equal(t, vesconf.Event.VNFName, "VNF-111")
+	os.Unsetenv("VESMGR_VNFNAME")
+}
+
 func TestCollectorConfiguration(t *testing.T) {
+	os.Unsetenv("VESMGR_VNFNAME")
 	os.Setenv("VESMGR_PRICOLLECTOR_USER", "user123")
 	os.Setenv("VESMGR_PRICOLLECTOR_PASSWORD", "pass123")
 	os.Setenv("VESMGR_PRICOLLECTOR_PASSPHRASE", "phrase123")
@@ -65,6 +80,7 @@ func TestCollectorConfiguration(t *testing.T) {
 }
 
 func TestCollectorConfigurationWhenEnvironmentVariablesAreNotDefined(t *testing.T) {
+	os.Unsetenv("VESMGR_VNFNAME")
 	os.Unsetenv("VESMGR_PRICOLLECTOR_USER")
 	os.Unsetenv("VESMGR_PRICOLLECTOR_PASSWORD")
 	os.Unsetenv("VESMGR_PRICOLLECTOR_PASSPHRASE")

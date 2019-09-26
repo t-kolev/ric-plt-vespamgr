@@ -20,22 +20,44 @@ package main
 import (
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"gopkg.in/yaml.v2"
 )
+
+const defaultReportingEntityID = "00000000-0000-0000-0000-000000000000"
+const defaultVNFName = "Vespa"
+
+func readSystemUUID() string {
+	data, err := ioutil.ReadFile("/sys/class/dmi/id/product_uuid")
+	if err != nil {
+		return defaultReportingEntityID
+	}
+	return strings.TrimSpace(string(data))
+}
+
+func getVNFName() string {
+	VNFName := os.Getenv("VESMGR_VNFNAME")
+	if VNFName == "" {
+		return defaultVNFName
+	}
+	return VNFName
+}
 
 func basicVespaConf() VESAgentConfiguration {
 	var vespaconf = VESAgentConfiguration{
 		DataDir: "/tmp/data",
 		Debug:   false,
 		Event: EventConfiguration{
-			VNFName:           "vespa-demo",                          // XXX
-			ReportingEntityID: "1af5bfa9-40b4-4522-b045-40e54f0310f", // XXX
-			MaxSize:           2000000,
-			NfNamingCode:      "hsxp",
+			VNFName:             getVNFName(),
+			ReportingEntityName: "Vespa",
+			ReportingEntityID:   readSystemUUID(),
+			MaxSize:             2000000,
+			NfNamingCode:        "hsxp",
 			NfcNamingCodes: []NfcNamingCode{
 				NfcNamingCode{
 					Type:  "oam",
@@ -50,6 +72,8 @@ func basicVespaConf() VESAgentConfiguration {
 			MaxMissed:     2,
 		},
 		Measurement: MeasurementConfiguration{
+			// Domain abbreviation has to be set to “Mvfs” for VES 5.3,
+			// and to “Measurement” for later VES interface versions.
 			DomainAbbreviation:   "Mvfs",
 			MaxBufferingDuration: time.Hour,
 			Prometheus: PrometheusConfig{

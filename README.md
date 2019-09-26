@@ -51,6 +51,7 @@ JSON schema v28.4.1:
 
 The VESPA manager container requires the following environment variables:
 
+* VESMGR_VNFNAME - VNF name as a string. Default: Vespa.
 * VESMGR_HB_INTERVAL - VES heartbeat interval as a string. For example: 30s.
 * VESMGR_MEAS_INTERVAL - Measurement interval as a string. For example: 60s.
 * VESMGR_PROMETHEUS_ADDR - Prometheus address. For example: http://127.0.0.1:123
