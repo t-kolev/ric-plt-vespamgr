@@ -57,9 +57,10 @@ func (suite *AppmgrHTTPServerTestSuite) TestSubscribexAppNotifications() {
 		var result map[string]interface{}
 		err := json.Unmarshal([]byte(body), &result)
 		suite.Nil(err)
-		suite.Equal(5, int(result["maxRetries"].(float64)))
-		suite.Equal(5, int(result["retryTimer"].(float64)))
-		suite.Equal("all", result["eventType"].(string))
+		data := result["Data"].(map[string]interface{})
+		suite.Equal(5, int(data["maxRetries"].(float64)))
+		suite.Equal(5, int(data["retryTimer"].(float64)))
+		suite.Equal("all", data["eventType"].(string))
 		suite.Equal("POST", req.Method)
 		res.Header().Add("Content-Type", "application/json")
 		res.WriteHeader(http.StatusCreated)
