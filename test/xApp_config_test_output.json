@@ -124,22 +124,28 @@
             "logger": {
                 "level": 5
             },
-            "metrics": [
+            "measurements": [
                 {
-                    "description": "Example counter 1",
-                    "enabled": true,
-                    "name": "App1ExampleCounterOne",
-                    "type": "counter",
-                    "objectName": "App1ExampleCounterOneObject",
-                    "objectInstance": "App1ExampleCounterOneObjectInstance"
-                },
-                {
-                    "description": "Example counter 2",
-                    "enabled": true,
-                    "name": "App1ExampleCounterTwo",
-                    "type": "counter",
-                    "objectName": "App1ExampleCounterTwoObject",
-                    "objectInstance": "App1ExampleCounterTwoObjectInstance"
+                    "measId": "M9001",
+                    "object": "XAPP-xApp1",
+                    "metrics": [
+                        {
+                            "description": "Example counter 1",
+                            "enabled": true,
+                            "name": "App1ExampleCounterOne",
+                            "type": "counter",
+                            "objectName": "App1ExampleCounterOneObject",
+                            "objectInstance": "App1ExampleCounterOneObjectInstance"
+                        },
+                        {
+                            "description": "Example counter 2",
+                            "enabled": true,
+                            "name": "App1ExampleCounterTwo",
+                            "type": "counter",
+                            "objectName": "App1ExampleCounterTwoObject",
+                            "objectInstance": "App1ExampleCounterTwoObjectInstance"
+                        }
+                    ]
                 }
             ]
         }
@@ -269,22 +275,28 @@
             "logger": {
                 "level": 3
             },
-            "metrics": [
+            "measurements": [
                 {
-                    "description": "Example counter",
-                    "enabled": true,
-                    "name": "App2ExampleCounterOne",
-                    "type": "counter",
-                    "objectName": "App2ExampleCounterOneObject",
-                    "objectInstance": "App2ExampleCounterOneObjectInstance"
-                },
-                {
-                    "description": "Another example counter",
-                    "enabled": true,
-                    "name": "App2ExampleCounterTwo",
-                    "type": "counter",
-                    "objectName": "App2ExampleCounterTwoObject",
-                    "objectInstance": "App2ExampleCounterTwoObjectInstance"
+                    "measId": "M9001",
+                    "object": "XAPP-xApp2",
+                    "metrics": [
+                        {
+                            "description": "Example counter",
+                            "enabled": true,
+                            "name": "App2ExampleCounterOne",
+                            "type": "counter",
+                            "objectName": "App2ExampleCounterOneObject",
+                            "objectInstance": "App2ExampleCounterOneObjectInstance"
+                        },
+                        {
+                            "description": "Another example counter",
+                            "enabled": true,
+                            "name": "App2ExampleCounterTwo",
+                            "type": "counter",
+                            "objectName": "App2ExampleCounterTwoObject",
+                            "objectInstance": "App2ExampleCounterTwoObjectInstance"
+                        }
+                    ]
                 }
             ]
         }

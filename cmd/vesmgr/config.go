@@ -98,6 +98,8 @@ func basicVespaConf() VESAgentConfiguration {
 type AppMetricsStruct struct {
 	ObjectName     string
 	ObjectInstance string
+	MeasId         string
+	MeasObject     string
 }
 
 // AppMetrics contains metrics definitions for all Xapps
@@ -108,11 +110,16 @@ type AppMetrics map[string]AppMetricsStruct
 //
 // { ...
 //   "config" : {
-//     "metrics": [
-//       { "name": "...", "objectName": "...", "objectInstamce": "..." },
+//	   "measurements": [
+//      {
+//     	  "metrics": [
+//          { "name": "...", "objectName": "...", "objectInstamce": "..." },
+//           ...
+//         ]
+//       }
 //       ...
 //     ]
-//   }
+//    }
 // }
 func parseMetricsFromXAppDescriptor(descriptor []byte, appMetrics AppMetrics) AppMetrics {
 	var desc []map[string]interface{}
@@ -120,11 +127,25 @@ func parseMetricsFromXAppDescriptor(descriptor []byte, appMetrics AppMetrics) Ap
 
 	for _, app := range desc {
 		config, configOk := app["config"]
-		if configOk {
-			metrics, metricsOk := config.(map[string]interface{})["metrics"]
-			if metricsOk {
-				parseMetricsRules(metrics.([]interface{}), appMetrics)
+		if !configOk {
+			logger.Info("No xApp config found!")
+			continue
+		}
+		measurements, measurementsOk := config.(map[string]interface{})["measurements"]
+		if !measurementsOk {
+			logger.Info("No xApp metrics found!")
+			continue
+		}
+
+		for _, m := range measurements.([]interface{}) {
+			measId, measIdOk := m.(map[string]interface{})["measId"].(string)
+			measObject, objectOk := m.(map[string]interface{})["object"].(string)
+			metrics, metricsOk := m.(map[string]interface{})["metrics"]
+			if !metricsOk || !measIdOk || !objectOk {
+				logger.Info("No metrics found for measId=%s Object=%s", measId, measObject)
+				continue
 			}
+			parseMetricsRules(metrics.([]interface{}), appMetrics, measId, measObject)
 		}
 	}
 	return appMetrics
@@ -134,7 +155,7 @@ func parseMetricsFromXAppDescriptor(descriptor []byte, appMetrics AppMetrics) Ap
 // of the following format:
 //    { "name": xxx, "objectName": yyy, "objectInstance": zzz }
 // Entries, which do not have all the necessary fields, are ignored.
-func parseMetricsRules(metricsMap []interface{}, appMetrics AppMetrics) AppMetrics {
+func parseMetricsRules(metricsMap []interface{}, appMetrics AppMetrics, measId, measObject string) AppMetrics {
 	for _, element := range metricsMap {
 		name, nameOk := element.(map[string]interface{})["name"].(string)
 		if nameOk {
@@ -142,7 +163,7 @@ func parseMetricsRules(metricsMap []interface{}, appMetrics AppMetrics) AppMetri
 			objectName, objectNameOk := element.(map[string]interface{})["objectName"].(string)
 			objectInstance, objectInstanceOk := element.(map[string]interface{})["objectInstance"].(string)
 			if !alreadyFound && objectNameOk && objectInstanceOk {
-				appMetrics[name] = AppMetricsStruct{objectName, objectInstance}
+				appMetrics[name] = AppMetricsStruct{objectName, objectInstance, measId, measObject}
 				logger.Info("parsed counter %s %s %s", name, objectName, objectInstance)
 			}
 			if alreadyFound {
@@ -154,30 +175,34 @@ func parseMetricsRules(metricsMap []interface{}, appMetrics AppMetrics) AppMetri
 }
 
 func getRules(vespaconf *VESAgentConfiguration, xAppConfig []byte) {
-	appMetrics := make(AppMetrics)
-	parseMetricsFromXAppDescriptor(xAppConfig, appMetrics)
-
-	makeRule := func(expr string, objName string, objInstance string) MetricRule {
+	makeRule := func(expr string, value AppMetricsStruct) MetricRule {
 		return MetricRule{
 			Target:         "AdditionalObjects",
 			Expr:           expr,
-			ObjectInstance: objInstance,
-			ObjectName:     objName,
+			ObjectInstance: value.ObjectInstance,
+			ObjectName:     value.ObjectName,
 			ObjectKeys: []Label{
 				Label{
 					Name: "ricComponentName",
 					Expr: "'{{.labels.kubernetes_name}}'",
 				},
+				Label{
+					Name: "measObject",
+					Expr: value.MeasObject,
+				},
+				Label{
+					Name: "measId",
+					Expr: value.MeasId,
+				},
 			},
 		}
 	}
-	var metricsMap map[string][]interface{}
-	json.Unmarshal(xAppConfig, &metricsMap)
-	metrics := parseMetricsRules(metricsMap["metrics"], appMetrics)
+	appMetrics := make(AppMetrics)
+	metrics := parseMetricsFromXAppDescriptor(xAppConfig, appMetrics)
 
 	vespaconf.Measurement.Prometheus.Rules.Metrics = make([]MetricRule, 0, len(metrics))
 	for key, value := range metrics {
-		vespaconf.Measurement.Prometheus.Rules.Metrics = append(vespaconf.Measurement.Prometheus.Rules.Metrics, makeRule(key, value.ObjectName, value.ObjectInstance))
+		vespaconf.Measurement.Prometheus.Rules.Metrics = append(vespaconf.Measurement.Prometheus.Rules.Metrics, makeRule(key, value))
 	}
 	if len(vespaconf.Measurement.Prometheus.Rules.Metrics) == 0 {
 		logger.Info("vespa config with empty metrics")

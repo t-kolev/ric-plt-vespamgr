@@ -165,7 +165,7 @@ func TestParseMetricsRules(t *testing.T) {
 			{ "name": "ricxapp_SDL_StoreError", "objectName": "ricxappSDLStoreErrorCounter", "objectInstance": "ricxappSDLStoreError" } ]}`
 	appMetrics := make(AppMetrics)
 	m := metricsStringToInterfaceArray(metricsJSON)
-	appMetrics = parseMetricsRules(m, appMetrics)
+	appMetrics = parseMetricsRules(m, appMetrics, "M1234", "App-1")
 	assert.Len(t, appMetrics, 6)
 	assert.Equal(t, "ricxappRMRreceivedCounter", appMetrics["ricxapp_RMR_Received"].ObjectName)
 	assert.Equal(t, "ricxappRMRTransmitErrorCounter", appMetrics["ricxapp_RMR_TransmitError"].ObjectName)
@@ -176,7 +176,7 @@ func TestParseMetricsRulesNoMetrics(t *testing.T) {
 	appMetrics := make(AppMetrics)
 	metricsJSON := `{"metrics": []`
 	m := metricsStringToInterfaceArray(metricsJSON)
-	appMetrics = parseMetricsRules(m, appMetrics)
+	appMetrics = parseMetricsRules(m, appMetrics, "M1234", "App-1")
 	assert.Empty(t, appMetrics)
 }
 
@@ -185,7 +185,7 @@ func TestParseMetricsRulesAdditionalFields(t *testing.T) {
 	metricsJSON := `{"metrics": [
 			{ "additionalField": "valueIgnored", "name": "ricxapp_RMR_Received", "objectName": "ricxappRMRreceivedCounter", "objectInstance": "ricxappRMRReceived" }]}`
 	m := metricsStringToInterfaceArray(metricsJSON)
-	appMetrics = parseMetricsRules(m, appMetrics)
+	appMetrics = parseMetricsRules(m, appMetrics, "M1234", "App-1")
 	assert.Len(t, appMetrics, 1)
 	assert.Equal(t, "ricxappRMRreceivedCounter", appMetrics["ricxapp_RMR_Received"].ObjectName)
 	assert.Equal(t, "ricxappRMRReceived", appMetrics["ricxapp_RMR_Received"].ObjectInstance)
@@ -198,7 +198,7 @@ func TestParseMetricsRulesMissingFields(t *testing.T) {
 			{ "name": "ricxapp_RMR_ReceiveError", "objectInstance": "ricxappRMRReceiveError" },
 			{ "name": "ricxapp_RMR_Transmitted", "objectName": "ricxappRMRTransmittedCounter", "objectInstance": "ricxappRMRTransmitted" }]}`
 	m := metricsStringToInterfaceArray(metricsJSON)
-	appMetrics = parseMetricsRules(m, appMetrics)
+	appMetrics = parseMetricsRules(m, appMetrics, "M1234", "App-1")
 	assert.Len(t, appMetrics, 2)
 	assert.Equal(t, "ricxappRMRreceivedCounter", appMetrics["ricxapp_RMR_Received"].ObjectName)
 	assert.Equal(t, "ricxappRMRTransmittedCounter", appMetrics["ricxapp_RMR_Transmitted"].ObjectName)
@@ -213,7 +213,7 @@ func TestParseMetricsRulesDuplicateDefinitionIsIgnored(t *testing.T) {
 			{ "name": "ricxapp_RMR_Received", "objectName": "ricxappRMRreceivedCounterXXX", "objectInstance": "ricxappRMRReceivedXXX" },
 			{ "name": "ricxapp_RMR_Transmitted", "objectName": "ricxappRMRTransmittedCounter", "objectInstance": "ricxappRMRTransmitted" }]}`
 	m := metricsStringToInterfaceArray(metricsJSON)
-	appMetrics = parseMetricsRules(m, appMetrics)
+	appMetrics = parseMetricsRules(m, appMetrics, "M1234", "App-1")
 	assert.Len(t, appMetrics, 2)
 	assert.Equal(t, "ricxappRMRreceivedCounter", appMetrics["ricxapp_RMR_Received"].ObjectName)
 	assert.Equal(t, "ricxappRMRReceived", appMetrics["ricxapp_RMR_Received"].ObjectInstance)
@@ -227,8 +227,8 @@ func TestParseMetricsRulesIncrementalFillOfAppMetrics(t *testing.T) {
 			{ "name": "ricxapp_RMR_Transmitted", "objectName": "ricxappRMRTransmittedCounter", "objectInstance": "ricxappRMRTransmitted" }]}`
 	m1 := metricsStringToInterfaceArray(metricsJSON1)
 	m2 := metricsStringToInterfaceArray(metricsJSON2)
-	appMetrics = parseMetricsRules(m1, appMetrics)
-	appMetrics = parseMetricsRules(m2, appMetrics)
+	appMetrics = parseMetricsRules(m1, appMetrics, "M1234", "App-1")
+	appMetrics = parseMetricsRules(m2, appMetrics,  "M1234", "App-1")
 	assert.Len(t, appMetrics, 2)
 	assert.Equal(t, "ricxappRMRreceivedCounter", appMetrics["ricxapp_RMR_Received"].ObjectName)
 	assert.Equal(t, "ricxappRMRReceived", appMetrics["ricxapp_RMR_Received"].ObjectInstance)

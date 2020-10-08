@@ -116,7 +116,7 @@ func (vesmgr *VesMgr) Init(listenPort string) *VesMgr {
 
 	var err error
 	if vesmgr.myIPAddress, err = getMyIP(); err != nil || vesmgr.myIPAddress == "" {
-		logger.Error("Cannot get myIPAddress: IP %s, err %s", vesmgr.myIPAddress, err.Error())
+		logger.Error("Cannot get myIPAddress: IP %s", vesmgr.myIPAddress)
 		panic("Cannot get my IP address")
 	}
 
