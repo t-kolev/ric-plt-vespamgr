@@ -59,10 +59,11 @@ func runXAppMgr(listener net.Listener, url string, suite *QueryXAppsConfigTestSu
 		switch r.Method {
 		case "GET":
 			suite.mu.Lock()
+			defer suite.mu.Unlock()
 			suite.xAppMgrFunc(w)
-			suite.mu.Unlock()
 		}
 	})
+
 	http.Serve(listener, nil)
 }
 
@@ -70,7 +71,10 @@ func (suite *QueryXAppsConfigTestSuite) TestQueryXAppsConfigFailsWithTimeout() {
 	doSleep := func(w http.ResponseWriter) {
 		time.Sleep(time.Second * 2)
 	}
+
+	suite.mu.Lock()
 	suite.xAppMgrFunc = doSleep
+	suite.mu.Unlock()
 
 	data, err := queryXAppsConfig("http://"+suite.listener.Addr().String()+"/test_url/", 1)
 	suite.Equal([]byte("{}"), data)
@@ -84,7 +88,10 @@ func (suite *QueryXAppsConfigTestSuite) TestQueryXAppsConfigFailsWithAnErrorRepl
 	doReplyWithErr := func(w http.ResponseWriter) {
 		http.Error(w, "405 method not allowed", http.StatusMethodNotAllowed)
 	}
+
+	suite.mu.Lock()
 	suite.xAppMgrFunc = doReplyWithErr
+	suite.mu.Unlock()
 
 	data, err := queryXAppsConfig("http://"+suite.listener.Addr().String()+"/test_url/", 1)
 	suite.Equal([]byte("{}"), data)
@@ -96,7 +103,10 @@ func (suite *QueryXAppsConfigTestSuite) TestQueryXAppsConfigOk() {
 	doReply := func(w http.ResponseWriter) {
 		fmt.Fprintf(w, "reply message")
 	}
+
+	suite.mu.Lock()
 	suite.xAppMgrFunc = doReply
+	suite.mu.Unlock()
 
 	data, err := queryXAppsConfig("http://"+suite.listener.Addr().String()+"/test_url/", 1)
 	suite.NotNil(data)
