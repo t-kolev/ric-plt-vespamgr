@@ -18,7 +18,7 @@
 #   platform project (RICP).
 #
 
-FROM golang:1.12 as gobuild-vespamgr
+FROM golang:1.12 as gobuild
 
 # Install utilities
 RUN apt update && apt install -y iputils-ping net-tools curl sudo
@@ -50,11 +50,11 @@ FROM ubuntu:18.04
 
 RUN mkdir -p /etc/ves-agent
 
-COPY --from=gobuild-vespamgr /usr/local/lib /usr/local/lib
-COPY --from=gobuild-vespamgr /root/go/bin /root/go/bin
-COPY --from=gobuild-vespamgr /root/go/bin/vespamgr /usr/local/bin/vesmgr
-COPY --from=gobuild-vespamgr /root/go/bin/vespamgr /vespamgr
-COPY --from=gobuild-vespamgr /go/src/vespamgr/config/* /cfg/
+COPY --from=gobuild /usr/local/lib /usr/local/lib
+COPY --from=gobuild /root/go/bin /root/go/bin
+COPY --from=gobuild /root/go/bin/vespamgr /usr/local/bin/vesmgr
+COPY --from=gobuild /root/go/bin/vespamgr /vespamgr
+COPY --from=gobuild /go/src/vespamgr/config/* /cfg/
 
 RUN ldconfig
 
