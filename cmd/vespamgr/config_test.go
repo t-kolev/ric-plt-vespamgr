@@ -178,6 +178,19 @@ func TestParseXAppDescriptor(t *testing.T) {
 	assert.Equal(t, "App2ExampleCounterOneObjectInstance", appMetrics["App2ExampleCounterOne"].ObjectInstance)
 	assert.Equal(t, "App2ExampleCounterTwoObject", appMetrics["App2ExampleCounterTwo"].ObjectName)
 	assert.Equal(t, "App2ExampleCounterTwoObjectInstance", appMetrics["App2ExampleCounterTwo"].ObjectInstance)
+
+	bytes, err = ioutil.ReadFile("../../test/noConfig_xApp_config_test_output.json")
+        assert.Nil(t, err)
+	appMetrics = vespaMgr.ParseMetricsFromDescriptor(bytes, appMetrics)
+
+	bytes, err = ioutil.ReadFile("../../test/noMeasurements_xApp_config_test_output.json")
+        assert.Nil(t, err)
+        appMetrics = vespaMgr.ParseMetricsFromDescriptor(bytes, appMetrics)
+
+	bytes, err = ioutil.ReadFile("../../test/inValidMeasurements_xApp_config_test_output.json")
+        assert.Nil(t, err)
+        appMetrics = vespaMgr.ParseMetricsFromDescriptor(bytes, appMetrics)
+
 }
 
 func TestParseXAppDescriptorWithNoConfig(t *testing.T) {

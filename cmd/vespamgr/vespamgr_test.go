@@ -163,3 +163,18 @@ func executeRequest(req *http.Request, handleR http.HandlerFunc) *httptest.Respo
 func TestVespaMgrTestSuite(t *testing.T) {
 	suite.Run(t, new(VespaMgrTestSuite))
 }
+
+func (suite *VespaMgrTestSuite) TestCreateConf() {
+	suite.vespaMgr.CreateConf("/unknown/text.txt", []byte{})
+}
+
+func (suite *VespaMgrTestSuite) TestHandleMeasurements() {
+        data, err := ioutil.ReadFile("../../test/xApp_config_test_output.json")
+        suite.Nil(err)
+
+        pbodyEn, _ := json.Marshal(data)
+        req, _ := http.NewRequest("POST", "/ric/v1/measurements", bytes.NewBuffer(pbodyEn))
+        handleFunc := http.HandlerFunc(suite.vespaMgr.HandleMeasurements)
+	response := executeRequest(req, handleFunc)
+        suite.Equal(http.StatusOK, response.Code)
+}
