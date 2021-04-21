@@ -55,7 +55,7 @@ COPY --from=gobuild /root/go/bin /root/go/bin
 COPY --from=gobuild /root/go/bin/vespamgr /usr/local/bin/vesmgr
 COPY --from=gobuild /root/go/bin/vespamgr /vespamgr
 COPY --from=gobuild /go/src/vespamgr/config/* /cfg/
-
+COPY --from=gobuild /go/src/vespamgr/config/plt-counter.json /cfg/plt-counter.json
 RUN ldconfig
 
 ENV CFG_FILE=/cfg/config-file.json

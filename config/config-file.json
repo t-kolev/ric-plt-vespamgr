@@ -55,6 +55,7 @@
         "host": "http://service-ricplt-vespamgr-http.ricplt.svc.cluster.local:8080",
         "measurementUrl": "/ric/v1/measurements",
         "pltFile": "/tmp/vespa-plt-meas.json",
+        "pltCounterFile": "/cfg/plt-counter.json",
         "appManager": {
             "host": "http://service-ricplt-appmgr-http.ricplt.svc.cluster.local:8080",
             "path": "/ric/v1/config",
@@ -72,7 +73,7 @@
         "collector": {
             "primaryAddr": "pod-ves-simulator",
             "secondaryAddr": "pod-ves-simulator",
-            "serverRoot": "0",
+            "serverRoot": "",
             "primaryPort": 8443,
             "primaryUser": "sample1",
             "primaryPassword": "sample1",

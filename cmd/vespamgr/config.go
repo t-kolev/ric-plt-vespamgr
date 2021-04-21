@@ -196,6 +196,17 @@ func (v *VespaMgr) GetRules(vespaconf *VESAgentConfiguration, xAppConfig []byte)
 			metrics = v.ParseMetricsFromDescriptor(pltConfig, metrics)
 		}
 	}
+    
+	// Adding Platform Counters
+	pltCounterFile :=  app.Config.GetString("controls.pltCounterFile")
+	bytes, err := ioutil.ReadFile(pltCounterFile)
+	if err != nil{
+		app.Logger.Error("Platform Matrices Configuration File not found")
+	} else {
+
+		metrics = v.ParseMetricsFromDescriptor(bytes,metrics)
+	}
+	
 
 	vespaconf.Measurement.Prometheus.Rules.Metrics = make([]MetricRule, 0, len(metrics))
 	for key, value := range metrics {
@@ -220,10 +231,12 @@ func (v *VespaMgr) GetCollectorConfiguration(vespaconf *VESAgentConfiguration) {
 }
 
 func (v *VespaMgr) CreateConfig(writer io.Writer, xAppStatus []byte) {
+
+	
 	vespaconf := v.BasicVespaConf()
 	v.GetRules(&vespaconf, xAppStatus)
 	v.GetCollectorConfiguration(&vespaconf)
-
+    
 	err := yaml.NewEncoder(writer).Encode(vespaconf)
 	if err != nil {
 		app.Logger.Error("Cannot write vespa conf file: %s", err.Error())
@@ -231,3 +244,4 @@ func (v *VespaMgr) CreateConfig(writer io.Writer, xAppStatus []byte) {
 	}
 	app.Logger.Info("Config file written to: %s", app.Config.GetString("controls.vesagent.configFile"))
 }
+

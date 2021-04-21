@@ -1,0 +1,58 @@
+[
+    {
+        "metadata": { },
+        "descriptor": { },
+        "config": {
+            "local": {
+                "host": ":8080"
+            },
+            "logger": {
+                "level": 5
+            },
+            "measurements": [
+                {
+                    "moId": "SEP-12/XAPP-1",
+                    "measType": "X2",
+                    "measId": "9001",
+                    "measInterval": "60",
+                    "metrics": [
+                        {
+                            "name": "exposer_transferred_bytes_total",
+                            "objectName": "exposer_transferred_bytes_total",
+                            "objectInstance": "exposer_transferred_bytes_total",
+                            "counterId": "0011",
+                            "type": "counter",
+                            "description": "exposer_transferred_bytes_total"
+                        },
+                        {
+                            "name": "exposer_scrapes_total",
+                            "objectName": "exposer_scrapes_total",
+                            "objectInstance": "exposer_scrapes_total",
+                            "counterId": "0012",
+                            "type": "counter",
+                            "description": "exposer_scrapes_total"
+                        },
+                        {
+                            "name": "exposer_request_latencies_count",
+                            "objectName": "exposer_request_latencies_count",
+                            "objectInstance": "exposer_request_latencies_count",
+                            "counterId": "0013",
+                            "type": "counter",
+                            "description": "exposer_request_latencies_count"
+                        },
+                        {
+                            "name": "exposer_request_latencies_sum",
+                            "objectName": "exposer_request_latencies_sum",
+                            "objectInstance": "exposer_request_latencies_sum",
+                            "counterId": "0014",
+                            "type": "counter",
+                            "description": "exposer_request_latencies_sum"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+    
+]
+
