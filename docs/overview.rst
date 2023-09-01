@@ -60,7 +60,7 @@ VES Collector Event Format
 The VES Agent transmits events to the VES Collector in the VES Common Event Format v5.4.1. The Common Event Format is expressed in JSON schema v28.4.1.
 
 VES Event Listener 5.4.1:
-<https://docs.onap.org/en/casablanca/submodules/vnfsdk/model.git/docs/files/VESEventListener.html>
+ earlier under h t t p s://docs.onap.org/en/casablanca/submodules/vnfsdk/model.git/docs/files/VESEventListener.html
 
 JSON schema v28.4.1:
 <https://github.com/nokia/ONAP-VESPA/blob/8e9d9e93bb00bed0f5402c9de9502385d5e80acc/doc/CommonEventFormat_28.4.1.json>
@@ -74,7 +74,7 @@ The VESPA manager container requires the following environment variables:
 * VESMGR_NFNAMINGCODE - NF naming code as a string. Default: ricp.
 * VESMGR_HB_INTERVAL - VES heartbeat interval as a string. For example: 30s.
 * VESMGR_MEAS_INTERVAL - Measurement interval as a string. For example: 60s.
-* VESMGR_PROMETHEUS_ADDR - Prometheus address. For example: http://127.0.0.1:123
+* VESMGR_PROMETHEUS_ADDR - Prometheus address. For example: h t t p://127.0.0.1:123
 * VESMGR_ALERTMANAGER_BIND_ADDR - Bind address to receive alerts from Prometheus AlertManager
 
 * VESMGR_PRICOLLECTOR_ADDR - Primary collector FQDN as a string. For example: ricaux-entry.
