@@ -5,6 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+      - name: Snyk authentication
+        run: snyk auth a2e37b25-3469-4e70-8ed7-cfc05011c922
+        
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/golang@master
         continue-on-error: true # To make sure that SARIF upload gets called
