@@ -43,7 +43,6 @@ jobs:
           scan-type: 'fs'
           format: 'json'
           output: 'trivy-results.json'
-          severity: 'HIGH,CRITICAL'
           
       - name: Upload json in the lib
         uses: actions/upload-artifact@v4
