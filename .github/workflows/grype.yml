@@ -37,19 +37,12 @@ jobs:
         image: "localbuild/testimage:latest"
         fail-build: true
         severity-cutoff: critical
-        output-format: sarif
-    - name: Output report to custom file
-      run: cat ${{ steps.grype-scan.outputs.sarif }} > grype-results.sarif
+        output-format: json
     - name: Upload vulnerability report
       uses: actions/upload-artifact@master
       if: always()
       with:
-        name: grype-results
-        path: |
-          grype-results.sarif
+        name: results.json
+        path: ./results.json
         if-no-files-found: warn
-    - name: Upload vulnerability report
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: ${{ steps.scan.outputs.sarif }}
 
